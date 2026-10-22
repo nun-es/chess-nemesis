@@ -83,20 +83,20 @@ O motor é GPLv3. A [licença](public/engine/COPYING.txt) e o [código-fonte cor
 - A análise de cada FEN isolada não conserva todo o histórico de repetição da partida para o motor. Algumas situações de repetição podem, portanto, receber uma avaliação aproximada.
 - Partidas sem PGN ou com PGN inválido não podem ser abertas. Não há dados fictícios apresentados como partidas ou avaliações reais.
 - O servidor de desenvolvimento encaminha `/chess-api` para a Chess.com e envia um `User-Agent` identificável. Na build estática, o navegador consulta a API diretamente; o proxy do Vite não acompanha a build. Se a hospedagem encontrar bloqueios de CORS ou do provedor, será necessário um proxy de mesma origem. Os arquivos públicos da Chess.com também podem demorar a atualizar por causa do cache.
-- O servidor Gemini foi desenhado para **uso local**. A build estática não inclui o proxy `/api/coach`; ao publicar, configure um proxy de mesma origem e acrescente autenticação, cotas por usuário, proteção de origem/CSRF, observabilidade e limites persistentes antes de expor o endpoint. Sem isso, não publique a API na internet.
+- No deploy da Vercel, o treinador é público e não exige senha. A chave Gemini fica exclusivamente no servidor. Os limites em memória no `CoachService` **não** são globais/persistentes em funções serverless. Configure limites de quota e gastos no provedor Gemini, acompanhe o uso na Vercel e considere rate limiting persistente e proteção contra abuso.
 - A interpretação em linguagem natural pode errar mesmo com contexto verificado. As variantes têm no máximo oito meios-lances no motor e seis enviados por posição; a profundidade 8–12 também limita conclusões táticas. Quando faltam dados, a resposta deve reconhecer a limitação.
 
 ## Próximas etapas
 
 Desafios personalizados a partir de fraquezas recorrentes. Autenticação, banco de dados, métricas de precisão e gamificação ainda não fazem parte do projeto.
 
-## Deploy gratuito na Vercel (experimental)
+## Deploy na Vercel (API pública)
 
-Esta branch adiciona Vercel Functions para o Nemesis AI Coach em `/api/coach` e `/api/coach/status`. O frontend continua sendo compilado com `npm run build` para `dist`. O servidor local `npm run coach:dev` não é necessário na Vercel.
+O frontend é compilado com `npm run build` e publicado em `dist`. As Vercel Functions `/api/coach` e `/api/coach/status` executam o treinador quando solicitadas; não é necessário rodar `npm run coach:dev` no servidor.
 
-1. Importe o repositório na Vercel com preset **Vite** e diretório de saída `dist`.
-2. Configure as variáveis **servidor apenas**: `GEMINI_API_KEY`, `GEMINI_MODEL` (opcional) e `COACH_ACCESS_CODE` (código longo e aleatório, diferente da chave Gemini).
-3. Faça deploy. Na primeira solicitação à IA, informe o código de acesso; ele ficará apenas em `sessionStorage` nessa aba. Não coloque esse código em `VITE_*`, repositório ou arquivos públicos.
-4. Teste `/api/coach/status`, a análise Stockfish e uma explicação real no navegador.
+1. Importe o repositório na Vercel com preset **Vite**, build `npm run build` e diretório de saída `dist`.
+2. Em Environment Variables configure `GEMINI_API_KEY` (segredo somente do servidor) e opcionalmente `GEMINI_MODEL`.
+3. Faça o deploy e teste `/api/coach/status`, Stockfish e uma explicação real.
+4. **Nunca** coloque `GEMINI_API_KEY` em `VITE_*`, no GitHub ou no navegador. `COACH_ACCESS_CODE` não é mais utilizado.
 
-**Segurança/limitações:** esse código de acesso compartilhado é uma barreira simples para uso pessoal, não um sistema de autenticação. O rate limit no `CoachService` ainda usa memória e **não é global/persistente** em funções serverless. Não divulgue o código de acesso e não habilite acesso irrestrito a estranhos. Para um serviço público, será necessário autenticação adequada, limites persistentes de requisições e controles extras de abuso. A consulta à Chess.com usa fetch direto do navegador em produção e pode falhar por CORS. A implantação ainda deve ser testada no ambiente real da Vercel.
+**Segurança e custos:** o Coach está aberto a qualquer visitante, sem login ou senha. Limites em memória não garantem proteção entre várias instâncias da Vercel, e cabeçalhos de origem não impedem clientes automatizados. Configure quotas/restrições de custo no Google, monitore o consumo do Gemini e da Vercel e implemente rate limiting persistente antes de divulgar amplamente. Se estiver em um plano com cobrança habilitada, requisições públicas poderão gerar custos. A consulta à Chess.com pode falhar por restrições de CORS; valide o fluxo no ambiente real de produção.
