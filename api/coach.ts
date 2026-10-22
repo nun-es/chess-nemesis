@@ -1,9 +1,7 @@
-import { timingSafeEqual } from 'node:crypto'
 import { GoogleGenAI, ThinkingLevel } from '@google/genai'
 import { CoachService, DEFAULT_MODEL, REQUEST_LIMITS, publicError } from '../server/coach'
 
 const apiKey = process.env.GEMINI_API_KEY?.trim()
-const accessCode = process.env.COACH_ACCESS_CODE?.trim()
 const model = process.env.GEMINI_MODEL?.trim() || DEFAULT_MODEL
 const ai = apiKey ? new GoogleGenAI({ apiKey }) : null
 
@@ -43,26 +41,15 @@ function json(status: number, body: object): Response {
   })
 }
 
-function isAuthorized(provided: string | null): boolean {
-  // Fail closed: the Coach must never be publicly callable without an access code.
-  if (!accessCode || !provided) return false
-  const received = Buffer.from(provided, 'utf8')
-  const expected = Buffer.from(accessCode, 'utf8')
-  return received.length === expected.length && timingSafeEqual(received, expected)
-}
-
 export async function POST(request: Request): Promise<Response> {
-  if (!apiKey || !accessCode) {
-    return json(503, { error: 'Configure GEMINI_API_KEY e COACH_ACCESS_CODE na Vercel.' })
+  if (!apiKey) {
+    return json(503, { error: 'Configure GEMINI_API_KEY na Vercel.' })
   }
 
-  // Explicit same-origin check; credentials are sent in a custom header.
+  // Reject cross-origin browser requests; this is not a substitute for rate limiting.
   const origin = request.headers.get('origin')
   if (origin && origin !== new URL(request.url).origin) {
     return json(403, { error: 'Origem não permitida.' })
-  }
-  if (!isAuthorized(request.headers.get('x-coach-access'))) {
-    return json(401, { error: 'Código de acesso do treinador inválido.' })
   }
   if (!(request.headers.get('content-type') ?? '').startsWith('application/json')) {
     return json(415, { error: 'Envie JSON.' })
