@@ -116,9 +116,21 @@ export async function requestCoach(payload: CoachRequest, signal: AbortSignal): 
   const existing = pending.get(key)
   if (existing) return existing
   const task = (async () => {
+    // The deployment uses a private access code to avoid publicly exposing the Gemini quota.
+    // Keep it in sessionStorage only (never in the Vite build or a public env variable).
+    const codeKey = 'nemesis-coach-access'
+    let code = sessionStorage.getItem(codeKey)
+    if (!code && !import.meta.env.DEV) {
+      code = window.prompt('Código de acesso ao Nemesis AI Coach:')?.trim() ?? ''
+      if (!code) throw new Error('Código de acesso necessário para utilizar a IA.')
+      sessionStorage.setItem(codeKey, code)
+    }
     const response = await fetch('/api/coach', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: key, signal,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...(code ? { 'x-coach-access': code } : {}) },
+      body: key, signal,
     })
+    if (response.status === 401 && !import.meta.env.DEV) sessionStorage.removeItem(codeKey)
     const body = await response.json().catch(() => null) as { text?: string; error?: string } | null
     if (!response.ok) throw new Error(body?.error ?? `Falha no treinador (HTTP ${response.status}).`)
     if (!body?.text?.trim()) throw new Error('O treinador retornou uma resposta vazia. Tente novamente.')
