@@ -143,7 +143,22 @@ export async function requestCoach(payload: CoachRequest, signal: AbortSignal): 
 }
 
 export async function coachStatus(signal?: AbortSignal): Promise<{ ready: boolean; model?: string; reason?: string }> {
-  const response = await fetch('/api/coach/status', { signal })
-  if (!response.ok) throw new Error('Servidor do treinador indisponível. Inicie npm run coach:dev.')
-  return response.json() as Promise<{ ready: boolean; model?: string; reason?: string }>
+  let response: Response
+  try {
+    response = await fetch('/api/coach/status', { signal, cache: 'no-store' })
+  } catch (error) {
+    if (signal?.aborted) throw error
+    throw new Error('Não foi possível conectar a /api/coach/status. Confira o deploy e os logs da Vercel.')
+  }
+  if (!response.ok) {
+    throw new Error(`O endpoint /api/coach/status retornou HTTP ${response.status}. Verifique Functions → Logs na Vercel.`)
+  }
+  if (!(response.headers.get('content-type') ?? '').includes('application/json')) {
+    throw new Error('A rota /api/coach/status retornou HTML em vez de JSON. Confira as rotas do deploy na Vercel.')
+  }
+  const data: unknown = await response.json().catch(() => null)
+  if (!data || typeof data !== 'object' || typeof (data as { ready?: unknown }).ready !== 'boolean') {
+    throw new Error('A rota /api/coach/status retornou um JSON inesperado. Confira os logs da Vercel.')
+  }
+  return data as { ready: boolean; model?: string; reason?: string }
 }
