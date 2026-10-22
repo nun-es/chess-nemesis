@@ -1,6 +1,6 @@
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { Chessboard } from 'react-chessboard'
-import { ArrowLeft, ArrowRight, ChevronsLeft, ChevronsRight, ExternalLink, RotateCcw, Swords, X } from 'lucide-react'
+import { Activity, ArrowLeft, ArrowRight, BarChart3, Bot, ChevronsLeft, ChevronsRight, ExternalLink, ListOrdered, RotateCcw, Swords, X } from 'lucide-react'
 import type { CSSProperties } from 'react'
 import { ANALYSIS_DEPTH, CLASSIFICATIONS, CLASSIFICATION_META, analyzeReplay, countClassifications, formatScore, nextCategoryPly, sanToPortuguese, whiteAdvantageFraction } from '../lib/analysis'
 import type { Classification, GameAnalysis, MoveEvaluation, Score } from '../lib/analysis'
@@ -106,6 +106,7 @@ export default function AnalysisView({ game, replay, onBack }: { game: GameSumma
   const [progress, setProgress] = useState({ done: 0, total: replay.fens.length })
   const [analysisError, setAnalysisError] = useState('')
   const [depth, setDepth] = useState(ANALYSIS_DEPTH)
+  const [activeTab, setActiveTab] = useState<'moves' | 'analysis' | 'coach' | 'summary'>('moves')
   const controllerRef = useRef<AbortController | null>(null)
   const runId = useRef(0)
   const moveListRef = useRef<HTMLDivElement | null>(null)
@@ -145,7 +146,7 @@ export default function AnalysisView({ game, replay, onBack }: { game: GameSumma
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return
+      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLButtonElement || (event.target instanceof HTMLElement && event.target.isContentEditable)) return
       if (event.key === 'ArrowLeft') { event.preventDefault(); setPly((value) => Math.max(0, value - 1)); setPreview(false) }
       if (event.key === 'ArrowRight') { event.preventDefault(); setPly((value) => Math.min(replay.moves.length, value + 1)); setPreview(false) }
       if (event.key === 'Home') { event.preventDefault(); setPly(0); setPreview(false) }
@@ -167,8 +168,19 @@ export default function AnalysisView({ game, replay, onBack }: { game: GameSumma
   }, [ply])
 
   const inProgress = phase === 'loading' || phase === 'running'
+  const tabs = [
+    { id: 'moves' as const, label: 'Jogadas', icon: ListOrdered },
+    { id: 'analysis' as const, label: 'Análise', icon: Activity },
+    { id: 'coach' as const, label: 'AI Coach', icon: Bot },
+    { id: 'summary' as const, label: 'Resumo', icon: BarChart3 },
+  ]
+  function selectRelativeTab(current: number, offset: number) {
+    const next = (current + offset + tabs.length) % tabs.length
+    setActiveTab(tabs[next].id)
+    requestAnimationFrame(() => document.getElementById(`analysis-tab-${tabs[next].id}`)?.focus())
+  }
   return <main className="analysis-layout page-wrap">
-    <div className="analysis-heading"><button className="back-link" onClick={() => { if (inProgress) stopAnalysis(); onBack() }} type="button"><ArrowLeft size={17} /> Voltar às partidas</button><span className="eyebrow"><span className="eyebrow-line" /> REPRODUÇÃO DE PARTIDA</span><h1>Reviva cada <em>jogada.</em></h1><p>Explore a partida no seu ritmo. Use as setas do teclado ou selecione um lance.</p></div>
+    <div className="analysis-heading"><button className="back-link" onClick={() => { if (inProgress) stopAnalysis(); onBack() }} type="button"><ArrowLeft size={17} /> Voltar às partidas</button><div><span className="eyebrow"><span className="eyebrow-line" /> CENTRAL DE ANÁLISE</span><h1>Reviva cada <em>jogada.</em></h1><p>Use as setas do teclado ou selecione um lance no histórico.</p></div></div>
     <div className="analysis-grid">
       <section className="board-section" aria-label="Tabuleiro da partida">
         <div className="board-player"><span className={`piece-avatar ${game.userColor === 'white' ? 'dark' : 'light'}`}>♞</span><strong>{top.username} <span>({top.rating ?? '—'})</span></strong><span className="board-side">{game.userColor === 'white' ? 'PRETAS' : 'BRANCAS'}</span></div>
@@ -177,8 +189,13 @@ export default function AnalysisView({ game, replay, onBack }: { game: GameSumma
         <div className="board-eval-text"><span>{preview ? 'ALTERNATIVA · POSIÇÃO ANTERIOR' : 'AVALIAÇÃO · BRANCAS'}</span><strong>{formatScore(displayedScore)}</strong></div>
         <div className="playback-controls" aria-label="Controles de reprodução"><button aria-label="Ir ao início" onClick={() => navigate(0)} disabled={ply === 0}><ChevronsLeft size={21} /></button><button aria-label="Voltar uma jogada" onClick={() => navigate(ply - 1)} disabled={ply === 0}><ArrowLeft size={21} /></button><span className="move-counter"><strong>{ply}</strong> / {replay.moves.length} lances</span><button aria-label="Avançar uma jogada" onClick={() => navigate(ply + 1)} disabled={ply === replay.moves.length}><ArrowRight size={21} /></button><button aria-label="Ir ao final" onClick={() => navigate(replay.moves.length)} disabled={ply === replay.moves.length}><ChevronsRight size={21} /></button></div>
       </section>
-      <div className="analysis-sidebar"><aside className="analysis-side"><div className="match-label"><Swords size={17} /> PARTIDA SELECIONADA <span>{formattedDate(game.endTime)}</span></div><div className="match-heading"><div><h2>{game.white.username} <span>vs.</span><br />{game.black.username}</h2><p>{typeLabel[game.timeClass]} <span className="dot">·</span> Você jogou de {game.userColor === 'white' ? 'brancas' : 'pretas'}</p></div><span className={`match-result ${game.result}`}>{resultLabel[game.result]}</span></div>
-        <section className={`engine-panel ${phase}`} aria-label="Análise com Stockfish">
+      <aside className="analysis-sidebar" aria-label="Painel de análise"><div className="analysis-side"><header className="match-compact"><div className="match-label"><Swords size={16} /> PARTIDA SELECIONADA <span>{formattedDate(game.endTime)}</span></div><div className="match-heading"><div><h2>{game.white.username} <span>vs.</span> {game.black.username}</h2><p>{typeLabel[game.timeClass]} <span className="dot">·</span> Você jogou de {game.userColor === 'white' ? 'brancas' : 'pretas'}</p></div><span className={`match-result ${game.result}`}>{resultLabel[game.result]}</span></div></header>
+        <div className="analysis-tabs" role="tablist" aria-label="Seções da análise">{tabs.map((tab, index) => { const Icon = tab.icon; return <button id={`analysis-tab-${tab.id}`} key={tab.id} type="button" role="tab" aria-selected={activeTab === tab.id} aria-controls={`analysis-panel-${tab.id}`} tabIndex={activeTab === tab.id ? 0 : -1} className={activeTab === tab.id ? 'active' : ''} onClick={() => setActiveTab(tab.id)} onKeyDown={(event) => { if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key)) return; event.preventDefault(); event.stopPropagation(); if (event.key === 'ArrowRight') selectRelativeTab(index, 1); if (event.key === 'ArrowLeft') selectRelativeTab(index, -1); if (event.key === 'Home') selectRelativeTab(0, -index); if (event.key === 'End') selectRelativeTab(index, tabs.length - 1 - index) }}><Icon size={16} /><span>{tab.label}</span></button> })}</div>
+        <div className="analysis-panel">
+        <div className="tab-pane moves-tab" id="analysis-panel-moves" role="tabpanel" aria-labelledby="analysis-tab-moves" hidden={activeTab !== 'moves'}><div className="move-list-heading"><span>HISTÓRICO DE JOGADAS</span><span>{Math.ceil(replay.moves.length / 2)} movimentos</span></div>
+          <div className="move-list" ref={moveListRef} aria-label="Histórico de movimentos">{Array.from({ length: Math.ceil(replay.moves.length / 2) }, (_, index) => <div className="move-pair" key={index}><span className="move-number">{index + 1}.</span>{[0, 1].map((offset) => { const moveIndex = index * 2 + offset; const move = replay.moves[moveIndex]; const classification = analysis?.moves[moveIndex]?.classification; return move ? <button key={moveIndex} className={`move-chip ${ply === moveIndex + 1 ? 'active' : ''} ${classification ? `classified ${classification}` : ''}`} onClick={() => navigate(moveIndex + 1)} aria-label={`${index + 1}${offset ? '...' : '.'} ${sanToPortuguese(move.san)}${classification ? `, ${classificationLabel(classification)}` : ''}`} aria-current={ply === moveIndex + 1 ? 'step' : undefined}>{sanToPortuguese(move.san)}{classification && classification !== 'unclassified' && <span className="move-mark" aria-hidden="true">{CLASSIFICATION_META[classification].symbol}</span>}</button> : <span key={moveIndex} /> })}</div>)}</div>
+          <div className="selected-move-glance"><span>{selectedMove ? `JOGADA ${Math.ceil(selectedMove.ply / 2)}${selectedMove.color === 'w' ? '.' : '...'}` : 'POSIÇÃO INICIAL'}</span><strong>{selectedMove ? sanToPortuguese(selectedMove.san) : 'Início da partida'}</strong><span>{selectedMove ? classificationLabel(selectedMove.classification) : formatScore(displayedScore)}</span></div></div>
+        <div className="tab-pane analysis-tab-content" id="analysis-panel-analysis" role="tabpanel" aria-labelledby="analysis-tab-analysis" hidden={activeTab !== 'analysis'}><section className={`engine-panel ${phase}`} aria-label="Análise com Stockfish">
           <div className="engine-panel-title"><span className="engine-icon">♞</span><div><strong>Stockfish 19 Lite</strong><span>Motor local · profundidade {depth}</span></div></div>
           {!inProgress && <label className="analysis-depth">Profundidade <select value={depth} onChange={(event) => { setDepth(Number(event.target.value)); setAnalysis(null); setPreview(false); setPhase('idle') }}><option value={8}>8 · mais rápido</option><option value={10}>10 · equilibrado</option><option value={12}>12 · mais detalhado</option></select></label>}
           {phase === 'idle' && <><p>Descubra os lances que mudaram a partida e encontre alternativas melhores.</p><button className="analyze-button" type="button" onClick={startAnalysis}>Analisar partida <ArrowRight size={17} /></button></>}
@@ -188,12 +205,13 @@ export default function AnalysisView({ game, replay, onBack }: { game: GameSumma
           {phase === 'error' && <><p className="engine-error" role="alert">{analysisError}</p><button className="analyze-button" type="button" onClick={startAnalysis}>Tentar novamente <ArrowRight size={17} /></button></>}
           <div className="engine-legal"><a href={`${import.meta.env.BASE_URL}engine/COPYING.txt`} target="_blank" rel="noreferrer">Licença GPLv3</a><span>·</span><a href={`${import.meta.env.BASE_URL}engine/stockfish-19-source.tar.gz`} download>Fonte do motor</a></div>
         </section>
-        <CoachPanel key={`${game.id}:${analysis ? `${analysis.depth}:done` : 'idle'}`} game={game} analysis={analysis} move={selectedMove} ply={ply} onJump={navigate} />
-        <div className="move-list-heading"><span>HISTÓRICO DE JOGADAS</span><span>{Math.ceil(replay.moves.length / 2)} movimentos</span></div>
-        <div className="move-list" ref={moveListRef} aria-label="Histórico de movimentos">{Array.from({ length: Math.ceil(replay.moves.length / 2) }, (_, index) => <div className="move-pair" key={index}><span className="move-number">{index + 1}.</span>{[0, 1].map((offset) => { const moveIndex = index * 2 + offset; const move = replay.moves[moveIndex]; const classification = analysis?.moves[moveIndex]?.classification; return move ? <button key={moveIndex} className={`move-chip ${ply === moveIndex + 1 ? 'active' : ''} ${classification ? `classified ${classification}` : ''}`} onClick={() => navigate(moveIndex + 1)} aria-label={`${index + 1}${offset ? '...' : '.'} ${sanToPortuguese(move.san)}${classification ? `, ${classificationLabel(classification)}` : ''}`} aria-current={ply === moveIndex + 1 ? 'step' : undefined}>{sanToPortuguese(move.san)}{classification && classification !== 'unclassified' && <span className="move-mark" aria-hidden="true">{CLASSIFICATION_META[classification].symbol}</span>}</button> : <span key={moveIndex} /> })}</div>)}</div>
         {analysis && (selectedMove ? <MoveDetails move={selectedMove} preview={preview} onPreview={() => setPreview((value) => !value)} /> : <div className="initial-evaluation"><strong>Posição inicial</strong><span>Avaliação: {formatScore(analysis.positions[0].score)} para as brancas. Selecione uma jogada para ver os detalhes.</span></div>)}
-        <div className="analysis-foot"><span>AVALIAÇÕES HEURÍSTICAS · PROFUNDIDADE {analysis?.depth ?? depth}</span>{game.id.startsWith('https://') && <a href={game.id} target="_blank" rel="noreferrer">Ver na Chess.com <ExternalLink size={15} /></a>}</div>
-      </aside><Summary analysis={analysis} userColor={game.userColor} onJump={navigate} loading={inProgress} currentPly={ply} /></div>
+        </div>
+        <div className="tab-pane coach-tab" id="analysis-panel-coach" role="tabpanel" aria-labelledby="analysis-tab-coach" hidden={activeTab !== 'coach'}><CoachPanel key={`${game.id}:${analysis ? `${analysis.depth}:done` : 'idle'}`} game={game} analysis={analysis} move={selectedMove} ply={ply} onJump={navigate} /></div>
+        <div className="tab-pane summary-tab" id="analysis-panel-summary" role="tabpanel" aria-labelledby="analysis-tab-summary" hidden={activeTab !== 'summary'}><Summary analysis={analysis} userColor={game.userColor} onJump={navigate} loading={inProgress} currentPly={ply} /></div>
+        </div>
+        <div className="analysis-foot"><span>STOCKFISH · PROFUNDIDADE {analysis?.depth ?? depth}</span>{game.id.startsWith('https://') && <a href={game.id} target="_blank" rel="noreferrer">Ver na Chess.com <ExternalLink size={15} /></a>}</div>
+      </div></aside>
     </div>
   </main>
 }

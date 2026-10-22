@@ -357,3 +357,100 @@
 @keyframes coachPulse{50%{opacity:.35;transform:scale(.75)}}
 @media(max-width:470px){.coach-panel{margin-inline:12px}.coach-diagnosis{align-items:stretch;flex-direction:column}.coach-diagnosis button{max-width:none}.coach-position>span{width:100%}}
 
+/* Analysis workspace */
+.analysis-layout{width:min(1440px,calc(100% - 64px));padding-top:22px;padding-bottom:38px}
+.analysis-heading{display:flex;align-items:center;gap:30px;min-height:70px}
+.analysis-heading .back-link{flex:none}
+.analysis-heading>div{display:flex;align-items:baseline;gap:18px;min-width:0}
+.analysis-heading h1{font-size:31px;line-height:1;margin:0;white-space:nowrap}
+.analysis-heading>div>p{font-size:12px;white-space:nowrap}
+.analysis-heading .eyebrow{display:none}
+.analysis-grid{grid-template-columns:minmax(420px,calc(100vh - 210px)) minmax(460px,1fr);gap:28px;margin-top:18px;max-width:1360px;margin-inline:auto}
+.board-section{position:sticky;top:14px;align-self:start}
+.board-player{height:38px;padding-inline:5px}
+.piece-avatar{height:28px;width:28px;font-size:21px}
+.board-shell{box-shadow:0 18px 55px #0008,0 0 0 1px #78906e33}
+.playback-controls{height:52px;margin-top:10px}
+.analysis-sidebar{align-self:start;min-width:0}
+.analysis-side{display:flex;flex-direction:column;height:min(740px,calc(100vh - 132px));min-height:590px;margin-top:0;border-color:#3b513d;background:linear-gradient(155deg,#152019,#0f1712);box-shadow:0 20px 55px #0005}
+.match-compact{flex:none}
+.match-label{height:38px;padding-inline:18px;font-size:9px}
+.match-heading{padding:13px 18px;align-items:center}
+.match-heading h2{font-size:17px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.match-heading p{margin-top:5px;font-size:11px}
+.analysis-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));flex:none;border-block:1px solid #304233;background:#101812;padding:0 8px}
+.analysis-tabs button{position:relative;display:flex;align-items:center;justify-content:center;gap:7px;min-width:0;height:50px;border:0;background:transparent;color:#839787;font-size:11px;font-weight:800}
+.analysis-tabs button:after{content:"";position:absolute;left:10px;right:10px;bottom:-1px;height:2px;background:transparent;border-radius:3px 3px 0 0}
+.analysis-tabs button:hover{color:#dbe9d7;background:#ffffff05}
+.analysis-tabs button.active{color:#c5ef91}
+.analysis-tabs button.active:after{background:#b3e27a;box-shadow:0 0 12px #aee37180}
+.analysis-tabs button:focus-visible{outline:2px solid #b3e27a;outline-offset:-4px;border-radius:5px}
+.analysis-panel{flex:1;min-height:0;overflow:hidden}
+.tab-pane{height:100%;min-height:0}
+.tab-pane[hidden]{display:none}
+.moves-tab,.analysis-tab-content{height:100%;min-height:0;display:flex;flex-direction:column}
+.move-list-heading{flex:none;border-top:0;padding:11px 18px}
+.move-list{height:auto;flex:1;min-height:0;padding:7px 14px 10px;overscroll-behavior:contain}
+.move-pair{min-height:38px}
+.move-chip{padding:7px 10px}
+.selected-move-glance{flex:none;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;min-height:50px;padding:9px 18px;border-top:1px solid #304233;background:#18261b}
+.selected-move-glance span{font-size:9px;font-weight:800;letter-spacing:.08em;color:#88a185}
+.selected-move-glance span:last-child{color:#b8de8d;letter-spacing:0}
+.selected-move-glance strong{font-size:13px;color:#edf4e9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.analysis-tab-content{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#526b52 transparent;padding:16px}
+.analysis-tab-content .engine-panel,.analysis-tab-content .move-details,.analysis-tab-content .initial-evaluation{margin:0 0 14px}
+.analysis-tab-content .move-details{flex:none}
+.coach-tab>.coach-panel{height:100%;margin:0;border:0;border-radius:0;box-shadow:none;display:flex;flex-direction:column}
+.coach-tab>.coach-panel .coach-header{display:none}
+.coach-tab>.coach-panel .coach-body{height:100%;min-height:0;display:flex;flex-direction:column;padding:14px 17px;border-top:0;overflow:hidden}
+.coach-tab>.coach-panel .coach-position,.coach-tab>.coach-panel .coach-primary,.coach-tab>.coach-panel .coach-quick{flex:none}
+.coach-tab>.coach-panel .coach-conversation{flex:1;min-height:90px;max-height:none;overscroll-behavior:contain}
+.coach-tab>.coach-panel .coach-chat-form{flex:none}
+.summary-tab>.analysis-summary{height:100%;max-width:none;margin:0;border:0;border-radius:0;overflow-y:auto;overscroll-behavior:contain;padding:17px 20px;background:transparent}
+.analysis-foot{flex:none;min-height:39px;padding:8px 17px}
+
+@media(max-width:1100px){
+  .analysis-layout{width:min(100% - 38px,1080px)}
+  .analysis-heading>div>p{display:none}
+  .analysis-grid{grid-template-columns:minmax(360px,1fr) minmax(430px,1fr);gap:20px}
+  .analysis-side{height:min(690px,calc(100vh - 128px))}
+}
+@media(min-width:761px) and (max-width:900px){
+  .analysis-heading{max-width:680px;margin:auto}
+  .analysis-grid{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(400px,1.1fr);gap:16px}
+  .board-section{max-width:none;margin:0}
+  .analysis-side{margin:0;min-height:540px;height:min(650px,calc(100vh - 130px))}
+  .analysis-tabs button{gap:4px;font-size:10px}
+}
+@media(max-width:760px){
+  .analysis-layout{width:calc(100% - 24px);padding-top:14px;padding-bottom:24px}
+  .analysis-heading{min-height:45px;margin-bottom:10px}
+  .analysis-heading>div{display:none}
+  .analysis-grid{display:block;margin-top:8px}
+  .board-section{position:static;max-width:620px}
+  .analysis-sidebar{margin-top:16px}
+  .analysis-side{height:min(680px,72vh);min-height:520px;margin:0}
+  .match-label{display:none}
+  .match-heading{padding:11px 14px}
+  .analysis-tabs{padding:0 3px;overflow-x:auto}
+  .analysis-tabs button{height:48px;gap:5px;font-size:10px}
+  .summary-tab>.analysis-summary{padding:15px}
+}
+@media(max-width:470px){
+  .analysis-layout{width:calc(100% - 16px)}
+  .board-with-eval{grid-template-columns:18px minmax(0,1fr);gap:5px}
+  .evaluation-rail{width:15px}
+  .evaluation-side{font-size:8px}
+  .board-player{height:34px}
+  .board-eval-text{padding-left:23px}
+  .playback-controls{height:48px}
+  .move-counter{width:auto;min-width:92px;font-size:11px}
+  .analysis-side{height:70vh;min-height:500px}
+  .match-heading h2{font-size:14px}
+  .match-heading p{font-size:9px}
+  .analysis-tabs button{flex-direction:column;gap:3px;height:52px;font-size:9px}
+  .coach-tab>.coach-panel{margin:0}
+  .coach-quick button{padding:6px 7px;font-size:10px}
+  .selected-move-glance{padding-inline:12px;gap:8px}
+}
+
