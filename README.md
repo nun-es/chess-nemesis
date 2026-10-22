@@ -89,3 +89,14 @@ O motor é GPLv3. A [licença](public/engine/COPYING.txt) e o [código-fonte cor
 ## Próximas etapas
 
 Desafios personalizados a partir de fraquezas recorrentes. Autenticação, banco de dados, métricas de precisão e gamificação ainda não fazem parte do projeto.
+
+## Deploy gratuito na Vercel (experimental)
+
+Esta branch adiciona Vercel Functions para o Nemesis AI Coach em `/api/coach` e `/api/coach/status`. O frontend continua sendo compilado com `npm run build` para `dist`. O servidor local `npm run coach:dev` não é necessário na Vercel.
+
+1. Importe o repositório na Vercel com preset **Vite** e diretório de saída `dist`.
+2. Configure as variáveis **servidor apenas**: `GEMINI_API_KEY`, `GEMINI_MODEL` (opcional) e `COACH_ACCESS_CODE` (código longo e aleatório, diferente da chave Gemini).
+3. Faça deploy. Na primeira solicitação à IA, informe o código de acesso; ele ficará apenas em `sessionStorage` nessa aba. Não coloque esse código em `VITE_*`, repositório ou arquivos públicos.
+4. Teste `/api/coach/status`, a análise Stockfish e uma explicação real no navegador.
+
+**Segurança/limitações:** esse código de acesso compartilhado é uma barreira simples para uso pessoal, não um sistema de autenticação. O rate limit no `CoachService` ainda usa memória e **não é global/persistente** em funções serverless. Não divulgue o código de acesso e não habilite acesso irrestrito a estranhos. Para um serviço público, será necessário autenticação adequada, limites persistentes de requisições e controles extras de abuso. A consulta à Chess.com usa fetch direto do navegador em produção e pode falhar por CORS. A implantação ainda deve ser testada no ambiente real da Vercel.
