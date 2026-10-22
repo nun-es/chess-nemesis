@@ -1,5 +1,5 @@
 import { GoogleGenAI, ThinkingLevel } from '@google/genai'
-import { CoachService, DEFAULT_MODEL, REQUEST_LIMITS, publicError } from '../server/coach'
+import { CoachService, DEFAULT_MODEL, REQUEST_LIMITS, publicError } from '../server/coach.js'
 
 const apiKey = process.env.GEMINI_API_KEY?.trim()
 const model = process.env.GEMINI_MODEL?.trim() || DEFAULT_MODEL
