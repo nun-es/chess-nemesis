@@ -1,8 +1,15 @@
 import { createHash } from 'node:crypto'
 import { Chess } from 'chess.js'
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import type { CoachRequest } from '../src/lib/coach'
-import { sanToPortuguese } from '../src/lib/analysis'
+import type { CoachRequest } from '../src/lib/coach.js'
+// Keep the server-side chess notation conversion independent of the frontend's
+// analysis/opening database imports. Serverless ESM cannot resolve extensionless
+// frontend modules and JSON imports through Node's native loader.
+function sanToPortuguese(san: string): string {
+  const piece: Record<string, string> = { K: 'R', Q: 'D', R: 'T', B: 'B', N: 'C' }
+  return san.replace(/^[KQRBN]/, (letter) => piece[letter])
+    .replace(/=([KQRBN])/, (_, letter: string) => `=${piece[letter]}`)
+}
 
 export const DEFAULT_MODEL = 'gemini-3.6-flash'
 export const REQUEST_LIMITS = { bytes: 16_384, perMinute: 12, perDay: 100, timeoutMs: 40_000, cacheEntries: 150 } as const
