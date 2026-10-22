@@ -33,6 +33,18 @@ const ReplayBoard = memo(function ReplayBoard({ replay, game, ply, preview, best
     arrows: preview && bestMove ? [{ startSquare: bestMove.from, endSquare: bestMove.to, color: '#b7e57b' }] : [],
     clearArrowsOnPositionChange: false,
     lightSquareStyle: { backgroundColor: '#e7e5d7' }, darkSquareStyle: { backgroundColor: '#759079' },
+    lightSquareNotationStyle: { color: '#415446' },
+    darkSquareNotationStyle: { color: '#f0eddf' },
+    alphaNotationStyle: {
+      bottom: 'clamp(3px, 0.8vw, 6px)', right: 'clamp(4px, 0.9vw, 7px)',
+      fontSize: 'clamp(9px, 1.35vw, 13px)', fontWeight: 800, lineHeight: 1,
+      letterSpacing: '0.01em', pointerEvents: 'none' as const, zIndex: 3,
+    },
+    numericNotationStyle: {
+      top: 'clamp(3px, 0.8vw, 6px)', left: 'clamp(4px, 0.9vw, 7px)',
+      fontSize: 'clamp(9px, 1.35vw, 13px)', fontWeight: 800, lineHeight: 1,
+      pointerEvents: 'none' as const, zIndex: 3,
+    },
     boardStyle: { borderRadius: '4px', overflow: 'hidden' },
   }), [bestMove, game.userColor, preview, replay, shownPly, squareStyles])
   return <Chessboard options={options} />
