@@ -24,10 +24,12 @@ export default function CoachPanel({ game, analysis, move, ply, onJump }: {
   const [errorInfo, setErrorInfo] = useState<{ text: string; ply: number; mode: Mode } | null>(null)
   const requestRef = useRef<{ id: number; mode: Mode; ply: number; controller: AbortController } | null>(null)
   const questionRef = useRef<HTMLTextAreaElement>(null)
+  const conversationRef = useRef<HTMLDivElement>(null)
   const activePlyRef = useRef(ply)
   const serial = useRef(0)
   const [lastAttempt, setLastAttempt] = useState<{ mode: Mode; question?: string; ply: number } | null>(null)
   const currentMessages = messages.filter((item) => item.ply === ply)
+  const lastMessageId = currentMessages.at(-1)?.id
   const visited = useMemo(() => [...new Set(messages.map((item) => item.ply))].sort((a, b) => a - b), [messages])
 
   function refreshStatus() {
@@ -55,6 +57,11 @@ export default function CoachPanel({ game, analysis, move, ply, onJump }: {
     field.style.height = 'auto'
     field.style.height = `${field.scrollHeight}px`
   }, [question])
+
+  useLayoutEffect(() => {
+    const conversation = conversationRef.current
+    if (conversation && lastMessageId !== undefined) conversation.scrollTop = conversation.scrollHeight
+  }, [lastMessageId, ply])
 
   async function send(mode: Mode, asked?: string) {
     if (!analysis || !status?.ready || requestRef.current) return
@@ -105,7 +112,7 @@ export default function CoachPanel({ game, analysis, move, ply, onJump }: {
         <div className="coach-position"><span>POSIÇÃO EM FOCO</span><strong>{move ? `${Math.ceil(ply / 2)}${move.color === 'w' ? '.' : '...'} ${sanToPortuguese(move.san)}` : 'Selecione uma jogada'}</strong><small>{move ? `· ${move.classification === 'unclassified' ? 'Indeterminada' : CLASSIFICATION_META[move.classification].label}` : ''}</small></div>
         <button className="coach-primary" type="button" disabled={!ready || !move || !!busy} onClick={() => send('explain')}><Sparkles size={16} /> Explicar com IA <ArrowRight size={15} /></button>
         <div className="coach-quick"><span>PERGUNTAS RÁPIDAS</span><div>{quickQuestions.map((prompt) => <button key={prompt} type="button" disabled={!ready || !move || !!busy} onClick={() => send('chat', prompt)}>{prompt}</button>)}</div></div>
-        <div className="coach-conversation" aria-live="polite">
+        <div ref={conversationRef} className="coach-conversation" aria-live="polite">
           {visited.length > 0 && <div className="coach-thread-list"><span>CONVERSAS DA SESSÃO</span>{visited.map((item) => <button key={item} type="button" className={item === ply ? 'current' : ''} onClick={() => onJump(item)}>Jogada {Math.ceil(item / 2)}{item % 2 ? '.' : '...'}</button>)}</div>}
           {currentMessages.length ? currentMessages.map((item) => <div key={item.id} className={`coach-message ${item.role}`}><span>{item.role === 'user' ? 'VOCÊ' : 'NEMESIS · JOGADA ' + Math.ceil(item.ply / 2)}</span>{item.role === 'assistant' ? <CoachMarkdown text={item.text} /> : <p>{item.text}</p>}</div>) : <p className="coach-muted">Escolha uma jogada e peça uma explicação. O treinador usa a posição e as variantes que o Stockfish realmente analisou.</p>}
           {busy && busy !== 'diagnosis' && <div className="coach-thinking"><span className="coach-pulse" /> Preparando explicação da jogada {Math.ceil(ply / 2)}...</div>}

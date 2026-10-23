@@ -321,7 +321,7 @@
 .coach-quick>div{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .coach-quick button{border:1px solid #43685e;border-radius:5px;background:#19332a;color:#bde9d6;padding:7px 9px;font-size:11px;font-weight:700}
 .coach-quick button:enabled:hover{border-color:#80ddbd;background:#244a3a}
-.coach-conversation{min-height:260px;max-height:clamp(420px,58vh,620px);overflow-y:auto;scrollbar-color:#55796c #15251d;margin-top:15px;padding:14px;border:1px solid #345347;border-radius:6px;background:#0e1b17}
+.coach-conversation{min-height:260px;max-height:clamp(420px,58vh,620px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:#55796c #15251d;margin-top:15px;padding:14px;border:1px solid #345347;border-radius:6px;background:#0e1b17}
 .coach-conversation>.coach-muted{margin:4px 1px}
 .coach-thread-list{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid #2b4438}
 .coach-thread-list>span{width:100%;font-size:9px}
@@ -373,7 +373,7 @@
 .playback-controls{height:52px;margin-top:10px}
 .analysis-sidebar{align-self:start;min-width:0}
 .analysis-side{display:flex;flex-direction:column;height:min(740px,calc(100vh - 132px));min-height:590px;margin-top:0;border-color:#3b513d;background:linear-gradient(155deg,#152019,#0f1712);box-shadow:0 20px 55px #0005}
-.analysis-side.coach-active{height:max(1040px,calc(100vh - 132px))}
+.analysis-side.coach-active{height:auto;min-height:0}
 .match-compact{flex:none}
 .match-label{height:38px;padding-inline:18px;font-size:9px}
 .match-heading{padding:13px 18px;align-items:center}
@@ -401,14 +401,16 @@
 .analysis-tab-content{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#526b52 transparent;padding:16px}
 .analysis-tab-content .engine-panel,.analysis-tab-content .move-details,.analysis-tab-content .initial-evaluation{margin:0 0 14px}
 .analysis-tab-content .move-details{flex:none}
-.coach-tab>.coach-panel{height:100%;margin:0;border:0;border-radius:0;box-shadow:none;display:flex;flex-direction:column}
+.coach-active .analysis-panel{flex:none;overflow:visible}
+.coach-active .coach-tab{height:auto}
+.coach-tab>.coach-panel{height:auto;margin:0;border:0;border-radius:0;box-shadow:none;display:flex;flex-direction:column}
 .coach-tab>.coach-panel .coach-header{display:none}
-.coach-tab>.coach-panel .coach-body{height:100%;min-height:0;display:flex;flex-direction:column;padding:14px 17px;border-top:0;overflow-y:auto}
+.coach-tab>.coach-panel .coach-body{height:auto;min-height:0;display:flex;flex-direction:column;padding:14px 17px;border-top:0;overflow:visible}
 .coach-tab>.coach-panel .coach-position,.coach-tab>.coach-panel .coach-primary,.coach-tab>.coach-panel .coach-quick{flex:none}
-.coach-tab>.coach-panel .coach-conversation{flex:1 0 480px;min-height:480px;max-height:none;overscroll-behavior:contain}
+.coach-tab>.coach-panel .coach-conversation{flex:none;height:clamp(480px,58vh,620px);min-height:0;max-height:none;overscroll-behavior:auto}
 .coach-tab>.coach-panel .coach-chat-form{flex:none}
 .coach-tab>.coach-panel .coach-diagnosis{flex:none;margin-top:12px;padding-top:12px}
-.coach-tab>.coach-panel .coach-diagnosis-text{flex:none;max-height:190px;overflow-y:auto}
+.coach-tab>.coach-panel .coach-diagnosis-text{flex:none}
 .coach-tab>.coach-panel .coach-footnote{flex:none}
 .summary-tab>.analysis-summary{height:100%;max-width:none;margin:0;border:0;border-radius:0;overflow-y:auto;overscroll-behavior:contain;padding:17px 20px;background:transparent}
 .analysis-foot{flex:none;min-height:39px;padding:8px 17px}
@@ -418,14 +420,12 @@
   .analysis-heading>div>p{display:none}
   .analysis-grid{grid-template-columns:minmax(360px,1fr) minmax(430px,1fr);gap:20px}
   .analysis-side{height:min(690px,calc(100vh - 128px))}
-  .analysis-side.coach-active{height:max(1040px,calc(100vh - 128px))}
 }
 @media(min-width:761px) and (max-width:900px){
   .analysis-heading{max-width:680px;margin:auto}
   .analysis-grid{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(400px,1.1fr);gap:16px}
   .board-section{max-width:none;margin:0}
   .analysis-side{margin:0;min-height:540px;height:min(650px,calc(100vh - 130px))}
-  .analysis-side.coach-active{height:1040px}
   .analysis-tabs button{gap:4px;font-size:10px}
 }
 @media(max-width:760px){
@@ -436,8 +436,7 @@
   .board-section{position:static;max-width:620px}
   .analysis-sidebar{margin-top:16px}
   .analysis-side{height:min(680px,72vh);min-height:520px;margin:0}
-  .analysis-side.coach-active{height:980px}
-  .coach-tab>.coach-panel .coach-conversation{flex-basis:440px;min-height:440px}
+  .coach-tab>.coach-panel .coach-conversation{height:440px}
   .match-label{display:none}
   .match-heading{padding:11px 14px}
   .analysis-tabs{padding:0 3px;overflow-x:auto}
@@ -454,7 +453,6 @@
   .playback-controls{height:48px}
   .move-counter{width:auto;min-width:92px;font-size:11px}
   .analysis-side{height:70vh;min-height:500px}
-  .analysis-side.coach-active{height:940px}
   .match-heading h2{font-size:14px}
   .match-heading p{font-size:9px}
   .analysis-tabs button{flex-direction:column;gap:3px;height:52px;font-size:9px}
