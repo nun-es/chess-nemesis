@@ -321,24 +321,24 @@
 .coach-quick>div{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .coach-quick button{border:1px solid #43685e;border-radius:5px;background:#19332a;color:#bde9d6;padding:7px 9px;font-size:11px;font-weight:700}
 .coach-quick button:enabled:hover{border-color:#80ddbd;background:#244a3a}
-.coach-conversation{min-height:220px;max-height:clamp(380px,52vh,540px);overflow-y:auto;scrollbar-color:#55796c #15251d;margin-top:15px;padding:14px;border:1px solid #345347;border-radius:6px;background:#0e1b17}
+.coach-conversation{min-height:260px;max-height:clamp(420px,58vh,620px);overflow-y:auto;scrollbar-color:#55796c #15251d;margin-top:15px;padding:18px;border:1px solid #345347;border-radius:6px;background:#0e1b17}
 .coach-conversation>.coach-muted{margin:4px 1px}
 .coach-thread-list{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid #2b4438}
 .coach-thread-list>span{width:100%;font-size:9px}
 .coach-thread-list button{border:1px solid #3f5b4c;background:transparent;color:#a4c7b4;border-radius:4px;padding:4px 6px;font-size:10px}
 .coach-thread-list button.current{border-color:#8edabb;background:#284f3d;color:#e5fbea}
-.coach-message{margin:10px 0;padding:13px 14px;border-radius:6px;line-height:1.6}
+.coach-message{margin:14px 0;padding:17px 18px;border-radius:6px;line-height:1.7}
 .coach-message.user{margin-left:28px;background:#263e2e}
 .coach-message.assistant{margin-right:13px;border:1px solid #365f58;background:#192d28}
 .coach-message span{font-size:9px;letter-spacing:.12em;font-weight:850;color:#9aceae}
 .coach-message.assistant span{color:#7ddcc5}
-.coach-message p,.coach-diagnosis-text p{white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0 0;color:#e3eee5;font-size:14px}
-.coach-markdown{margin-top:7px;color:#e3eee5;font-size:14px;line-height:1.65;overflow-wrap:anywhere}
-.coach-markdown p{white-space:normal;margin:0 0 8px}
+.coach-message p,.coach-diagnosis-text p{white-space:pre-wrap;overflow-wrap:anywhere;margin:9px 0 0;color:#e3eee5;font-size:17px;line-height:1.7}
+.coach-markdown{margin-top:9px;color:#e3eee5;font-size:17px;line-height:1.7;overflow-wrap:anywhere}
+.coach-markdown p{white-space:normal;margin:0 0 14px}
 .coach-markdown p:last-child,.coach-markdown ul:last-child,.coach-markdown ol:last-child{margin-bottom:0}
 .coach-markdown strong{color:#f4fff6;font-weight:800}
 .coach-markdown ul,.coach-markdown ol{padding-left:20px;margin:7px 0 9px}
-.coach-markdown li{margin:3px 0}
+.coach-markdown li{margin:7px 0}
 .coach-markdown li p{margin:0}
 .coach-markdown a{color:#9ee9cb;text-decoration:underline}
 .coach-chat-form{display:flex;align-items:flex-end;gap:8px;margin-top:10px}
