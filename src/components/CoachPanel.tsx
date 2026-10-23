@@ -23,6 +23,7 @@ export default function CoachPanel({ game, analysis, move, ply, onJump }: {
   const [busy, setBusy] = useState<Mode | null>(null)
   const [errorInfo, setErrorInfo] = useState<{ text: string; ply: number; mode: Mode } | null>(null)
   const requestRef = useRef<{ id: number; mode: Mode; ply: number; controller: AbortController } | null>(null)
+  const questionRef = useRef<HTMLTextAreaElement>(null)
   const activePlyRef = useRef(ply)
   const serial = useRef(0)
   const [lastAttempt, setLastAttempt] = useState<{ mode: Mode; question?: string; ply: number } | null>(null)
@@ -47,6 +48,13 @@ export default function CoachPanel({ game, analysis, move, ply, onJump }: {
     const request = requestRef.current
     if (request && request.mode !== 'diagnosis' && request.ply !== ply) request.controller.abort()
   }, [ply])
+
+  useLayoutEffect(() => {
+    const field = questionRef.current
+    if (!field) return
+    field.style.height = 'auto'
+    field.style.height = `${field.scrollHeight}px`
+  }, [question])
 
   async function send(mode: Mode, asked?: string) {
     if (!analysis || !status?.ready || requestRef.current) return
@@ -102,7 +110,7 @@ export default function CoachPanel({ game, analysis, move, ply, onJump }: {
           {currentMessages.length ? currentMessages.map((item) => <div key={item.id} className={`coach-message ${item.role}`}><span>{item.role === 'user' ? 'VOCÊ' : 'NEMESIS · JOGADA ' + Math.ceil(item.ply / 2)}</span>{item.role === 'assistant' ? <CoachMarkdown text={item.text} /> : <p>{item.text}</p>}</div>) : <p className="coach-muted">Escolha uma jogada e peça uma explicação. O treinador usa a posição e as variantes que o Stockfish realmente analisou.</p>}
           {busy && busy !== 'diagnosis' && <div className="coach-thinking"><span className="coach-pulse" /> Preparando explicação da jogada {Math.ceil(ply / 2)}...</div>}
         </div>
-        <form className="coach-chat-form" onSubmit={(event) => { event.preventDefault(); void send('chat', question) }}><input aria-label="Pergunta ao treinador" value={question} onChange={(event) => setQuestion(event.target.value.slice(0, 400))} placeholder="Pergunte sobre esta posição..." maxLength={400} disabled={!ready || !move || !!busy} /><button type="submit" aria-label="Enviar pergunta" disabled={!ready || !move || !!busy || !question.trim()}><Send size={17} /></button></form>
+        <form className="coach-chat-form" onSubmit={(event) => { event.preventDefault(); void send('chat', question) }}><textarea ref={questionRef} rows={3} aria-label="Pergunta ao treinador" value={question} onChange={(event) => setQuestion(event.target.value.slice(0, 400))} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); event.currentTarget.form?.requestSubmit() } }} placeholder="Pergunte sobre esta posição..." maxLength={400} disabled={!ready || !move || !!busy} /><button type="submit" aria-label="Enviar pergunta" disabled={!ready || !move || !!busy || !question.trim()}><Send size={17} /></button></form>
         <div className="coach-diagnosis"><div><span>REVISÃO DO TREINADOR</span><p>Uma leitura educativa da sua partida, baseada em até dez posições críticas.</p></div><button type="button" disabled={!ready || !!busy} onClick={() => send('diagnosis')}>{diagnosis ? 'Ver novamente' : 'Receber diagnóstico do treinador'}</button></div>
         {busy === 'diagnosis' && <div className="coach-thinking"><span className="coach-pulse" /> Preparando diagnóstico da partida...</div>}
         {diagnosis && <div className="coach-diagnosis-text"><span>DIAGNÓSTICO · ESTA PARTIDA</span><CoachMarkdown text={diagnosis} /></div>}

@@ -90,7 +90,7 @@
 .back-link:hover{color:#c9f19e}
 .analysis-heading h1{font-size:49px;margin:15px 0 7px}
 .analysis-heading>p{font-size:14px}
-.analysis-grid{display:grid;grid-template-columns:minmax(0,600px) minmax(0,1fr);gap:44px;align-items:start;margin-top:30px}
+.analysis-grid{display:grid;grid-template-columns:minmax(0,560px) minmax(0,1fr);gap:28px;align-items:start;margin-top:30px}
 .board-section{min-width:0}
 .board-player{height:48px;display:flex;align-items:center;gap:10px;color:#eef3e8}
 .board-player strong{font-size:15px}
@@ -321,19 +321,19 @@
 .coach-quick>div{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .coach-quick button{border:1px solid #43685e;border-radius:5px;background:#19332a;color:#bde9d6;padding:7px 9px;font-size:11px;font-weight:700}
 .coach-quick button:enabled:hover{border-color:#80ddbd;background:#244a3a}
-.coach-conversation{max-height:310px;overflow-y:auto;scrollbar-color:#55796c #15251d;margin-top:15px;padding:10px;border:1px solid #345347;border-radius:6px;background:#0e1b17}
+.coach-conversation{min-height:220px;max-height:clamp(380px,52vh,540px);overflow-y:auto;scrollbar-color:#55796c #15251d;margin-top:15px;padding:14px;border:1px solid #345347;border-radius:6px;background:#0e1b17}
 .coach-conversation>.coach-muted{margin:4px 1px}
 .coach-thread-list{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid #2b4438}
 .coach-thread-list>span{width:100%;font-size:9px}
 .coach-thread-list button{border:1px solid #3f5b4c;background:transparent;color:#a4c7b4;border-radius:4px;padding:4px 6px;font-size:10px}
 .coach-thread-list button.current{border-color:#8edabb;background:#284f3d;color:#e5fbea}
-.coach-message{margin:8px 0;padding:9px 10px;border-radius:6px;line-height:1.5}
+.coach-message{margin:10px 0;padding:13px 14px;border-radius:6px;line-height:1.6}
 .coach-message.user{margin-left:28px;background:#263e2e}
 .coach-message.assistant{margin-right:13px;border:1px solid #365f58;background:#192d28}
 .coach-message span{font-size:9px;letter-spacing:.12em;font-weight:850;color:#9aceae}
 .coach-message.assistant span{color:#7ddcc5}
-.coach-message p,.coach-diagnosis-text p{white-space:pre-wrap;overflow-wrap:anywhere;margin:5px 0 0;color:#e3eee5;font-size:12px}
-.coach-markdown{margin-top:6px;color:#e3eee5;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
+.coach-message p,.coach-diagnosis-text p{white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0 0;color:#e3eee5;font-size:14px}
+.coach-markdown{margin-top:7px;color:#e3eee5;font-size:14px;line-height:1.65;overflow-wrap:anywhere}
 .coach-markdown p{white-space:normal;margin:0 0 8px}
 .coach-markdown p:last-child,.coach-markdown ul:last-child,.coach-markdown ol:last-child{margin-bottom:0}
 .coach-markdown strong{color:#f4fff6;font-weight:800}
@@ -341,11 +341,11 @@
 .coach-markdown li{margin:3px 0}
 .coach-markdown li p{margin:0}
 .coach-markdown a{color:#9ee9cb;text-decoration:underline}
-.coach-chat-form{display:flex;gap:5px;margin-top:9px}
-.coach-chat-form input{flex:1;min-width:0;padding:9px 10px;border:1px solid #426759;border-radius:5px;background:#10221b;color:#eef8ee;font-size:12px;outline:none}
-.coach-chat-form input:focus{border-color:#81dbbc}
-.coach-chat-form input::placeholder{color:#769386}
-.coach-chat-form button{display:grid;place-items:center;width:37px;border:0;border-radius:5px;background:#5fc6a6;color:#102b20}
+.coach-chat-form{display:flex;align-items:flex-end;gap:8px;margin-top:10px}
+.coach-chat-form textarea{box-sizing:border-box;flex:1;min-width:0;min-height:84px;max-height:180px;overflow-y:auto;resize:none;padding:12px 13px;border:1px solid #426759;border-radius:5px;background:#10221b;color:#eef8ee;font:inherit;font-size:14px;line-height:1.5;outline:none}
+.coach-chat-form textarea:focus{border-color:#81dbbc}
+.coach-chat-form textarea::placeholder{color:#769386}
+.coach-chat-form button{display:grid;place-items:center;flex:none;width:42px;height:42px;border:0;border-radius:5px;background:#5fc6a6;color:#102b20}
 .coach-chat-form button:disabled{opacity:.45}
 .coach-diagnosis{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding-top:15px;border-top:1px solid #355448}
 .coach-diagnosis p{margin:5px 0 0;color:#91ada1;font-size:11px;line-height:1.4}
