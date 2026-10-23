@@ -327,13 +327,13 @@
 .coach-thread-list>span{width:100%;font-size:9px}
 .coach-thread-list button{border:1px solid #3f5b4c;background:transparent;color:#a4c7b4;border-radius:4px;padding:4px 6px;font-size:10px}
 .coach-thread-list button.current{border-color:#8edabb;background:#284f3d;color:#e5fbea}
-.coach-message{margin:10px 0;padding:13px 14px;border-radius:6px;line-height:1.6}
+.coach-message{margin:11px 0;padding:15px 16px;border-radius:6px;line-height:1.65}
 .coach-message.user{margin-left:28px;background:#263e2e}
 .coach-message.assistant{margin-right:13px;border:1px solid #365f58;background:#192d28}
 .coach-message span{font-size:9px;letter-spacing:.12em;font-weight:850;color:#9aceae}
 .coach-message.assistant span{color:#7ddcc5}
-.coach-message p,.coach-diagnosis-text p{white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0 0;color:#e3eee5;font-size:14px}
-.coach-markdown{margin-top:7px;color:#e3eee5;font-size:14px;line-height:1.65;overflow-wrap:anywhere}
+.coach-message p,.coach-diagnosis-text p{white-space:pre-wrap;overflow-wrap:anywhere;margin:7px 0 0;color:#e3eee5;font-size:15px;line-height:1.65}
+.coach-markdown{margin-top:7px;color:#e3eee5;font-size:15px;line-height:1.65;overflow-wrap:anywhere}
 .coach-markdown p{white-space:normal;margin:0 0 8px}
 .coach-markdown p:last-child,.coach-markdown ul:last-child,.coach-markdown ol:last-child{margin-bottom:0}
 .coach-markdown strong{color:#f4fff6;font-weight:800}
@@ -342,7 +342,7 @@
 .coach-markdown li p{margin:0}
 .coach-markdown a{color:#9ee9cb;text-decoration:underline}
 .coach-chat-form{display:flex;align-items:flex-end;gap:8px;margin-top:10px}
-.coach-chat-form textarea{box-sizing:border-box;flex:1;min-width:0;min-height:84px;max-height:180px;overflow-y:auto;resize:none;padding:12px 13px;border:1px solid #426759;border-radius:5px;background:#10221b;color:#eef8ee;font:inherit;font-size:14px;line-height:1.5;outline:none}
+.coach-chat-form textarea{box-sizing:border-box;flex:1;min-width:0;min-height:108px;max-height:220px;overflow-y:auto;resize:none;padding:12px 13px;border:1px solid #426759;border-radius:5px;background:#10221b;color:#eef8ee;font:inherit;font-size:15px;line-height:1.5;outline:none}
 .coach-chat-form textarea:focus{border-color:#81dbbc}
 .coach-chat-form textarea::placeholder{color:#769386}
 .coach-chat-form button{display:grid;place-items:center;flex:none;width:42px;height:42px;border:0;border-radius:5px;background:#5fc6a6;color:#102b20}
@@ -365,7 +365,7 @@
 .analysis-heading h1{font-size:31px;line-height:1;margin:0;white-space:nowrap}
 .analysis-heading>div>p{font-size:12px;white-space:nowrap}
 .analysis-heading .eyebrow{display:none}
-.analysis-grid{grid-template-columns:minmax(420px,calc(100vh - 210px)) minmax(460px,1fr);gap:28px;margin-top:18px;max-width:1360px;margin-inline:auto}
+.analysis-grid{grid-template-columns:minmax(420px,calc(100vh - 270px)) minmax(480px,1fr);gap:24px;margin-top:18px;max-width:1360px;margin-inline:auto}
 .board-section{position:sticky;top:14px;align-self:start}
 .board-player{height:38px;padding-inline:5px}
 .piece-avatar{height:28px;width:28px;font-size:21px}
@@ -373,7 +373,7 @@
 .playback-controls{height:52px;margin-top:10px}
 .analysis-sidebar{align-self:start;min-width:0}
 .analysis-side{display:flex;flex-direction:column;height:min(740px,calc(100vh - 132px));min-height:590px;margin-top:0;border-color:#3b513d;background:linear-gradient(155deg,#152019,#0f1712);box-shadow:0 20px 55px #0005}
-.analysis-side.coach-active{height:max(940px,calc(100vh - 132px))}
+.analysis-side.coach-active{height:max(1040px,calc(100vh - 132px))}
 .match-compact{flex:none}
 .match-label{height:38px;padding-inline:18px;font-size:9px}
 .match-heading{padding:13px 18px;align-items:center}
@@ -405,8 +405,11 @@
 .coach-tab>.coach-panel .coach-header{display:none}
 .coach-tab>.coach-panel .coach-body{height:100%;min-height:0;display:flex;flex-direction:column;padding:14px 17px;border-top:0;overflow-y:auto}
 .coach-tab>.coach-panel .coach-position,.coach-tab>.coach-panel .coach-primary,.coach-tab>.coach-panel .coach-quick{flex:none}
-.coach-tab>.coach-panel .coach-conversation{flex:1;min-height:340px;max-height:none;overscroll-behavior:contain}
+.coach-tab>.coach-panel .coach-conversation{flex:1 0 480px;min-height:480px;max-height:none;overscroll-behavior:contain}
 .coach-tab>.coach-panel .coach-chat-form{flex:none}
+.coach-tab>.coach-panel .coach-diagnosis{flex:none;margin-top:12px;padding-top:12px}
+.coach-tab>.coach-panel .coach-diagnosis-text{flex:none;max-height:190px;overflow-y:auto}
+.coach-tab>.coach-panel .coach-footnote{flex:none}
 .summary-tab>.analysis-summary{height:100%;max-width:none;margin:0;border:0;border-radius:0;overflow-y:auto;overscroll-behavior:contain;padding:17px 20px;background:transparent}
 .analysis-foot{flex:none;min-height:39px;padding:8px 17px}
 
@@ -415,14 +418,14 @@
   .analysis-heading>div>p{display:none}
   .analysis-grid{grid-template-columns:minmax(360px,1fr) minmax(430px,1fr);gap:20px}
   .analysis-side{height:min(690px,calc(100vh - 128px))}
-  .analysis-side.coach-active{height:max(940px,calc(100vh - 128px))}
+  .analysis-side.coach-active{height:max(1040px,calc(100vh - 128px))}
 }
 @media(min-width:761px) and (max-width:900px){
   .analysis-heading{max-width:680px;margin:auto}
   .analysis-grid{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(400px,1.1fr);gap:16px}
   .board-section{max-width:none;margin:0}
   .analysis-side{margin:0;min-height:540px;height:min(650px,calc(100vh - 130px))}
-  .analysis-side.coach-active{height:940px}
+  .analysis-side.coach-active{height:1040px}
   .analysis-tabs button{gap:4px;font-size:10px}
 }
 @media(max-width:760px){
@@ -433,7 +436,8 @@
   .board-section{position:static;max-width:620px}
   .analysis-sidebar{margin-top:16px}
   .analysis-side{height:min(680px,72vh);min-height:520px;margin:0}
-  .analysis-side.coach-active{height:900px}
+  .analysis-side.coach-active{height:980px}
+  .coach-tab>.coach-panel .coach-conversation{flex-basis:440px;min-height:440px}
   .match-label{display:none}
   .match-heading{padding:11px 14px}
   .analysis-tabs{padding:0 3px;overflow-x:auto}
@@ -450,7 +454,7 @@
   .playback-controls{height:48px}
   .move-counter{width:auto;min-width:92px;font-size:11px}
   .analysis-side{height:70vh;min-height:500px}
-  .analysis-side.coach-active{height:900px}
+  .analysis-side.coach-active{height:940px}
   .match-heading h2{font-size:14px}
   .match-heading p{font-size:9px}
   .analysis-tabs button{flex-direction:column;gap:3px;height:52px;font-size:9px}
